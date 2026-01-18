@@ -205,8 +205,8 @@ class InteractionVideoSystemInfer(torch.nn.Module):
         # 准备数据
         ds = CustomDataset(
             video_root=self.hparams.dataset.video_root,
-            video_root2=self.hparams.dataset.video_root2,
-            first_root=self.hparams.dataset.first_root,
+            video_root2=self.hparams.dataset.get('video_root2', None),
+            first_root=self.hparams.dataset.get('first_root', None),
             height=self.hparams.dataset.height,
             width=self.hparams.dataset.width,
             sample_n_frames=self.hparams.dataset.sample_n_frames,
@@ -303,11 +303,14 @@ class InteractionVideoSystemInfer(torch.nn.Module):
             )
             video_generate = out.frames[0]
 
-            # 对齐帧
-            meta, video_generate, video_gt = self._align_frames(meta, video_generate, video_gt, is_one2three)
+            # 对齐帧 (只对齐 meta 和 generate)
+            f_meta, f_gen = meta.shape[0], video_generate.shape[0]
+            min_f = min(f_meta, f_gen)
+            meta = meta[:min_f]
+            video_generate = video_generate[:min_f]
 
-            # 拼接保存
-            concat = np.concatenate([meta, video_generate, video_gt], axis=1)
+            # 拼接保存 (只拼接输入和生成，不含GT)
+            concat = np.concatenate([meta, video_generate], axis=1)
             save_path = os.path.join(save_root, f"batch_{batch_idx}.mp4")
             export_to_video(concat, output_video_path=save_path, fps=self.hparams.dataset.fps)
             print(f"[Infer] Saved: {save_path}")

@@ -56,12 +56,18 @@ class CustomDataset(Dataset):
         video_list = sorted(
             [x for x in os.listdir(self.video_root) if x.lower().endswith(video_exts)]
         )
-        video_list2 = sorted(
-            [x for x in os.listdir(self.video_root2) if x.lower().endswith(video_exts)]
-        )
-
         self.video_paths = [os.path.join(self.video_root, v) for v in video_list]
-        self.video_paths2 = [os.path.join(self.video_root2, v) for v in video_list2]
+
+        # video_root2 可选（推理时可能没有 gt）
+        if self.video_root2 and os.path.isdir(self.video_root2):
+            video_list2 = sorted(
+                [x for x in os.listdir(self.video_root2) if x.lower().endswith(video_exts)]
+            )
+            self.video_paths2 = [os.path.join(self.video_root2, v) for v in video_list2]
+            self.inference_mode = False
+        else:
+            self.video_paths2 = self.video_paths  # 推理模式：复用 video_paths
+            self.inference_mode = True
 
         self.height = height
         self.width = width
@@ -79,8 +85,9 @@ class CustomDataset(Dataset):
         self.len_videos2 = len(self.video_paths2)
         self.len_firsts = len(self.first_paths)
 
-        # 两路视频必须一一对应
-        assert self.len_videos == self.len_videos2, "mismatch in first videos and third videos"
+        # 两路视频必须一一对应（推理模式下跳过）
+        if not self.inference_mode:
+            assert self.len_videos == self.len_videos2, "mismatch in first videos and third videos"
 
     def __len__(self):
         if self.training_len != -1:
