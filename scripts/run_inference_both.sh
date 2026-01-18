@@ -13,8 +13,8 @@ LORA_EPIC="/home/cloud-user/fga/Mitty/output/policy_finetune/checkpoints/step=19
 SRC_VIDEO_DIR="/home/cloud-user/fga/Mitty/real_videos"
 # 临时目录基础路径
 TMP_BASE="/tmp/mitty_inference"
-# 统一的输出目录名
-OUTPUT_NAME="inference_all_real"
+# 输出目录基础名
+OUTPUT_BASE="inference_all_policy"
 
 # 获取所有视频文件
 VIDEOS=($(ls ${SRC_VIDEO_DIR}/*.mp4 | sort -V))
@@ -23,18 +23,22 @@ NUM_VIDEOS=${#VIDEOS[@]}
 echo "[INFO] Found ${NUM_VIDEOS} videos to process"
 
 # 可用GPU列表 (1-6 内存充足)
-GPUS=(1 2 3 4 5 6 0)
+GPUS=(1 2 3 4 5 6 0 7)
 NUM_GPUS=${#GPUS[@]}
 
 # 为每个视频创建单独目录并在不同GPU上并行运行
 for i in "${!VIDEOS[@]}"; do
     VIDEO="${VIDEOS[$i]}"
     VIDEO_NAME=$(basename "$VIDEO")
+    VIDEO_BASE="${VIDEO_NAME%.mp4}"
     GPU_IDX=$((i % NUM_GPUS))
     GPU=${GPUS[$GPU_IDX]}
 
+    # 每个视频使用独立的experiment_name，避免覆盖
+    OUTPUT_NAME="${OUTPUT_BASE}/${VIDEO_BASE}"
+
     # 创建临时目录并链接视频
-    TMP_DIR="${TMP_BASE}/gpu${GPU}_${VIDEO_NAME%.mp4}"
+    TMP_DIR="${TMP_BASE}/gpu${GPU}_${VIDEO_BASE}"
     mkdir -p "${TMP_DIR}"
     ln -sf "${VIDEO}" "${TMP_DIR}/${VIDEO_NAME}"
 
@@ -66,7 +70,7 @@ dataset:
   pin_memory: True
 EOF
 
-    echo "[INFO] Starting video ${VIDEO_NAME} on GPU ${GPU}..."
+    echo "[INFO] Starting video ${VIDEO_NAME} on GPU ${GPU} -> output: ${OUTPUT_NAME}"
     CUDA_VISIBLE_DEVICES=${GPU} python src/wan2_inference_plus.py \
         --config "${CONFIG_TMP}" \
         --ckpt_path "${LORA_EPIC}" \
