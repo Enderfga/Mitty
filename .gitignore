@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.env
+.venv
+env/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Training outputs
+output/
+ckpt/
+dataset/
+
+# Logs
+*.log
+wandb/
+
+# Jupyter
+.ipynb_checkpoints/
