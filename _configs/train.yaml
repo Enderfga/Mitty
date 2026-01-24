@@ -1,19 +1,19 @@
 experiment_project: 'Mitty'
-experiment_name: 'train'
-model_id:    "/Path/to/Wan2.2-TI2V-5B-Diffusers"
-output_root: '/Path/to/Output_Path'
+experiment_name: 'human2robot_finetune'
+model_id:    "/root/data/Mitty/ckpt/Wan2.2-T2V-A14B-Diffusers"
+output_root: '/root/data/Mitty/output'
 use_DiffSynth: True
 use_drop_text: True
 use_lora: True
 
 training:
   resume_path: ~
-  batch_size: 2
-  max_steps: 5000
+  batch_size: 1
+  max_steps: 19000
   warmup_steps: 10
-  learning_rate: 1e-4
+  learning_rate: 1e-5
   weight_decay: 1e-2
-  save_val_interval_steps: 1000
+  save_val_interval_steps: 100
   accumulate_grad_batches: 2
   gradient_clip_val: ~
   precision: "bf16-mixed"
@@ -23,15 +23,20 @@ training:
   benchmark: False
 
 dataset:
-  video_root:  '/Path/to/Human_Videos/' # human video path
-  video_root2: '/Path/to/Robot_Videos/' # robot video path
-  first_root:  '/Path/to/First_Frame/'  # first frame path, leave an empty directory (/Path/to/Empty/) if not used
+  # 子文件夹模式：每个子文件夹包含 video_L.mp4 (人类) 和 2.mp4 (机械臂)
+  subfolder_mode: True
+  human_filename: "video_L.mp4"
+  robot_filename: "2.mp4"
+  # 多个数据目录用逗号分隔
+  video_root:  '/root/data/Mitty/dataset/robot,/root/data/Mitty/dataset/robot2'
+  video_root2: ~
+  first_root:  ~
   is_one2three: True
   height: 224
   width: 416
   sample_n_frames: 81
-  fps: 24
+  fps: 16
   num_workers: 8
   shuffle: True
-  drop_last: True 
+  drop_last: True
   pin_memory: True

@@ -10,11 +10,11 @@
 > [Show Lab](https://sites.google.com/view/showlab), National University of Singapore
 > <br>
 
-<a href="https://arxiv.org/abs/xxx"><img src="https://img.shields.io/badge/ariXv-xxxx.xxxx-A42C25.svg" alt="arXiv"></a>
+<a href="https://arxiv.org/abs/2512.17253"><img src="https://img.shields.io/badge/arXiv-2512.17253-A42C25.svg" alt="arXiv"></a>
 <a href="https://huggingface.co/spaces/xxxx/xxxx"><img src="https://img.shields.io/badge/🤗_HuggingFace-Space-ffbd45.svg" alt="HuggingFace"></a>
 <a href="https://huggingface.co/spaces/xxxx/xxxx"><img src="https://img.shields.io/badge/🤗_HuggingFace-Space-ffbd45.svg" alt="HuggingFace"></a>
-<a href="https://huggingface.co/xxxx/xxxx"><img src="https://img.shields.io/badge/🤗_HuggingFace-Model-ffbd45.svg" alt="HuggingFace"></a>
-<a href="https://huggingface.co/datasets/xxxx/xxxx/"><img src="https://img.shields.io/badge/🤗_HuggingFace-Dataset-ffbd45.svg" alt="HuggingFace"></a>
+<a href="https://huggingface.co/showlab/Mitty_Model"><img src="https://img.shields.io/badge/🤗_HuggingFace-Model-ffbd45.svg" alt="HuggingFace"></a>
+<a href="https://huggingface.co/datasets/showlab/Mitty_Dataset"><img src="https://img.shields.io/badge/🤗_HuggingFace-Dataset-ffbd45.svg" alt="HuggingFace"></a>
 
 <br>
 
@@ -40,32 +40,57 @@ pip install -r requirements.txt
 
 ## 📦 HuggingFace Models & Datasets
 
-### 1. Pretrained model
+### 1. Download Pretrained Model
 
-The fine-tuned Mitty models will be available at:
+The fine-tuned Mitty model is available at: [showlab/Mitty_Model](https://huggingface.co/showlab/Mitty_Model)
 
-- **Model:**
-  - `https://huggingface.co/showlab/Mitty_Model`
+Download to `ckpt/` directory:
 
+```bash
+mkdir -p ckpt
+huggingface-cli download showlab/Mitty_Model --local-dir ckpt/Mitty_Model
+```
 
-### 2. Dataset
+**Note**: This codebase uses the Diffusers-integrated model format (e.g., `Wan2.2-TI2V-5B-Diffusers`) which includes proper subfolder structure (tokenizer/, text_encoder/, vae/, transformer/, scheduler/).
 
-The paired human–robot dataset will be released as a HuggingFace dataset:
+### 2. Download and Prepare Dataset
 
-- **Dataset:**
-  - `https://huggingface.co/datasets/showlab/Mitty_Dataset`
+The paired human–robot dataset is available at: [showlab/Mitty_Dataset](https://huggingface.co/datasets/showlab/Mitty_Dataset)
 
-A recommended format is:
+Download and extract to `dataset/` directory:
+
+```bash
+# Download dataset
+mkdir -p dataset
+huggingface-cli download showlab/Mitty_Dataset --repo-type dataset --local-dir dataset/tmp
+
+# Extract dataset
+cd dataset
+unzip -q tmp/Human2Robot.zip
+unzip -q tmp/EPIC-KITCHENS.zip
+rm -rf tmp
+cd ..
+```
+
+The dataset will be organized as:
 
 ```text
 dataset/
-  ├── human/
-  │   ├── xxx_00001.mp4
-  │   ├── xxx_00001.txt # prompt
-  │   └── ...
-  ├── robot/
-  │   ├── xxx_00001.mp4
-  │   └── ...
+  ├── Human2Robot/
+  │   ├── human/
+  │   │   ├── xxx_00001.mp4
+  │   │   ├── xxx_00001.txt # prompt
+  │   │   └── ...
+  │   └── robot/
+  │       ├── xxx_00001.mp4
+  │       └── ...
+  └── EPIC-KITCHENS/
+      ├── human/
+      │   ├── xxx_00001.mp4
+      │   └── ...
+      └── robot/
+          ├── xxx_00001.mp4
+          └── ...
 ```
 
 ---
