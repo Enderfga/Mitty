@@ -1,7 +1,7 @@
 experiment_project: 'Mitty'
-experiment_name: 'Masquerade_finetune'
-model_id:    "/home/cloud-user/fga/Mitty/ckpt/Wan2.2-T2V-A14B-Diffusers"
-output_root: '/home/cloud-user/fga/Mitty/output'
+experiment_name: 'human2robot_finetune'
+model_id:    "/root/data/Mitty/ckpt/Wan2.2-T2V-A14B-Diffusers"
+output_root: '/root/data/Mitty/output'
 use_DiffSynth: True
 use_drop_text: True
 use_lora: True
@@ -23,9 +23,14 @@ training:
   benchmark: False
 
 dataset:
-  video_root:  '/home/cloud-user/fga/Mitty/dataset/Masquerade/human'
-  video_root2: '/home/cloud-user/fga/Mitty/dataset/Masquerade/robot'
-  first_root:  '/home/cloud-user/fga/Mitty/dataset/empty'
+  # 子文件夹模式：每个子文件夹包含 video_L.mp4 (人类) 和 2.mp4 (机械臂)
+  subfolder_mode: True
+  human_filename: "video_L.mp4"
+  robot_filename: "2.mp4"
+  # 多个数据目录用逗号分隔
+  video_root:  '/root/data/Mitty/dataset/robot,/root/data/Mitty/dataset/robot2'
+  video_root2: ~
+  first_root:  ~
   is_one2three: True
   height: 224
   width: 416

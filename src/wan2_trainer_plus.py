@@ -524,13 +524,16 @@ def main(opt):
     # Dataset && Dataloader
     train_dataset = CustomDataset(
         video_root=opt.dataset.video_root,
-        video_root2=opt.dataset.video_root2,
-        first_root=opt.dataset.first_root,
+        video_root2=opt.dataset.get('video_root2', None),
+        first_root=opt.dataset.get('first_root', None),
         height=opt.dataset.height,
         width=opt.dataset.width,
         sample_n_frames=opt.dataset.sample_n_frames,
         is_one2three=opt.dataset.is_one2three,
-        training_len=opt.num_nodes * opt.num_gpus * opt.training.accumulate_grad_batches * opt.training.max_steps * opt.training.batch_size # 自动计算样本数
+        training_len=opt.num_nodes * opt.num_gpus * opt.training.accumulate_grad_batches * opt.training.max_steps * opt.training.batch_size, # 自动计算样本数
+        subfolder_mode=opt.dataset.get('subfolder_mode', False),
+        human_filename=opt.dataset.get('human_filename', 'video_L.mp4'),
+        robot_filename=opt.dataset.get('robot_filename', '2.mp4'),
     )
     train_dataloader = DataLoader(
         train_dataset,
@@ -542,12 +545,15 @@ def main(opt):
     )
     val_dataset = CustomDataset(
         video_root=opt.dataset.video_root,
-        video_root2=opt.dataset.video_root2,
-        first_root=opt.dataset.first_root,
+        video_root2=opt.dataset.get('video_root2', None),
+        first_root=opt.dataset.get('first_root', None),
         height=opt.dataset.height,
         width=opt.dataset.width,
         is_one2three=opt.dataset.is_one2three,
         sample_n_frames=opt.dataset.sample_n_frames,
+        subfolder_mode=opt.dataset.get('subfolder_mode', False),
+        human_filename=opt.dataset.get('human_filename', 'video_L.mp4'),
+        robot_filename=opt.dataset.get('robot_filename', '2.mp4'),
     )
     val_dataloader = DataLoader(
         val_dataset,
