@@ -531,9 +531,6 @@ def main(opt):
         sample_n_frames=opt.dataset.sample_n_frames,
         is_one2three=opt.dataset.is_one2three,
         training_len=opt.num_nodes * opt.num_gpus * opt.training.accumulate_grad_batches * opt.training.max_steps * opt.training.batch_size, # 自动计算样本数
-        subfolder_mode=opt.dataset.get('subfolder_mode', False),
-        human_filename=opt.dataset.get('human_filename', 'video_L.mp4'),
-        robot_filename=opt.dataset.get('robot_filename', '2.mp4'),
     )
     train_dataloader = DataLoader(
         train_dataset,
@@ -551,9 +548,6 @@ def main(opt):
         width=opt.dataset.width,
         is_one2three=opt.dataset.is_one2three,
         sample_n_frames=opt.dataset.sample_n_frames,
-        subfolder_mode=opt.dataset.get('subfolder_mode', False),
-        human_filename=opt.dataset.get('human_filename', 'video_L.mp4'),
-        robot_filename=opt.dataset.get('robot_filename', '2.mp4'),
     )
     val_dataloader = DataLoader(
         val_dataset,

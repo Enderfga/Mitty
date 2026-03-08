@@ -16,10 +16,16 @@ venv/
 *.swp
 *.swo
 
+# Data / large files
+real_videos/
+robot/
+dataset/
+*.mp4
+*.hdf5
+
 # Training outputs
 output/
 ckpt/
-dataset/
 
 # Logs
 *.log
